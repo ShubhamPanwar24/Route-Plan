@@ -1,36 +1,60 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RM Field Status Submission</title>
 <style>
-:root{--p:#1267d8;--pd:#0b4fa4;--txt:#111827;--mut:#667085;--bd:#d8e2ef;--ok:#067647;--err:#b42318;--warn:#b54708}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef6ff,#fff);color:var(--txt)}
-.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.card{width:100%;max-width:610px;background:#fff;border:1px solid var(--bd);border-radius:22px;box-shadow:0 18px 45px rgba(20,44,84,.13);padding:26px}
-.brand{display:flex;gap:14px;align-items:center;margin-bottom:14px}.logo{width:50px;height:50px;border-radius:15px;background:var(--p);color:#fff;display:grid;place-items:center;font-weight:900}h1{font-size:24px;margin:0}.sub{margin:5px 0 0;color:var(--mut);font-size:14px}
-.dateBox{background:#eef6ff;border:1px dashed #93c5fd;border-radius:14px;padding:13px 14px;margin:14px 0 20px;font-weight:900}.setup{display:none;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
-.field{margin:15px 0}label{display:block;font-weight:900;margin:0 0 8px}select,input{width:100%;padding:13px;border:1px solid var(--bd);border-radius:12px;background:#fff;font-size:15px}
-.statusGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.status{border:1px solid var(--bd);border-radius:14px;background:#fff;padding:13px;text-align:left;font-weight:900;cursor:pointer}.status.active{border-color:var(--p);box-shadow:0 0 0 3px rgba(18,103,216,.12);background:#f7fbff}
-.btn{width:100%;border:0;border-radius:14px;background:var(--p);color:#fff;padding:15px;font-size:16px;font-weight:900;cursor:pointer;margin-top:12px}.btn:hover{background:var(--pd)}.btn:disabled{opacity:.65;cursor:not-allowed}
-.msg{display:none;margin-top:14px;padding:12px;border-radius:12px;font-size:14px;line-height:1.35;white-space:pre-line}.msg.ok{display:block;background:#ecfdf3;color:var(--ok);border:1px solid #abefc6}.msg.err{display:block;background:#fff1f0;color:var(--err);border:1px solid #fecdca}.msg.warn{display:block;background:#fffaeb;color:var(--warn);border:1px solid #fedf89}
-.hint,.footer{font-size:12px;color:var(--mut)}.hint{margin-top:7px}.footer{text-align:center;margin-top:15px}.version{font-size:11px;color:#98a2b3;text-align:center;margin-top:8px}
-@media(max-width:480px){.statusGrid{grid-template-columns:1fr}.card{padding:20px}}
-</style></head>
-<body><div class="wrap"><main class="card">
-<div class="brand"><div class="logo">RM</div><div><h1>Field Status Submission</h1><p class="sub">Select AM, RM name and today's status</p></div></div>
-<div id="setupWarning" class="setup">Power Automate URL is not configured. Paste HTTP POST URL in APP_CONFIG.powerAutomateUrl inside index.html.</div>
-<div id="dateText" class="dateBox"></div>
-<form id="statusForm">
-<div class="field"><label for="am">AM Name</label><select id="am" required><option value="">Select AM</option></select></div>
-<div class="field"><label for="rm">RM Name</label><select id="rm" required disabled><option value="">Select RM</option></select></div>
-<div class="field"><label>Status</label><div id="statusGrid" class="statusGrid"></div></div>
-<div class="field" id="otherTaskWrap" style="display:none"><label for="otherTaskName">Other Task Status Name</label><input id="otherTaskName" maxlength="120" placeholder="Example: Training, Meeting, Audit"><div class="hint">This field appears only when Others Task is selected.</div></div>
-<button id="submitBtn" class="btn" type="submit">Submit Status</button><div id="msg" class="msg"></div>
-</form><div class="footer">This version reads Power Automate response and shows Success/Failed.</div><div class="version">RM-FIELD-STATUS-RESPONSE-AWARE-V5-20260707</div>
+:root { --primary:#1b67d2; --primary-dark:#0d4ea8; --text:#111827; --muted:#667085; --border:#d7e2f0; --ok:#067647; --err:#b42318; --warn:#b54708; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:Arial, Helvetica, sans-serif; background:linear-gradient(135deg,#edf5ff,#ffffff); color:var(--text); }
+.wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+.card { width:100%; max-width:620px; background:#fff; border:1px solid var(--border); border-radius:22px; box-shadow:0 18px 48px rgba(15,42,82,.14); padding:26px; }
+.brand { display:flex; gap:14px; align-items:center; margin-bottom:14px; }
+.logo { width:50px; height:50px; border-radius:15px; background:var(--primary); color:#fff; display:grid; place-items:center; font-weight:900; letter-spacing:.4px; }
+h1 { margin:0; font-size:24px; }
+.sub { margin:5px 0 0; color:var(--muted); font-size:14px; }
+.dateBox { background:#eef6ff; border:1px dashed #93c5fd; border-radius:14px; padding:13px 14px; margin:14px 0 18px; font-weight:900; }
+.setup { display:none; background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; border-radius:12px; padding:10px 12px; font-size:13px; margin-bottom:12px; }
+.field { margin:15px 0; }
+label { display:block; font-weight:900; margin:0 0 8px; }
+select,input { width:100%; padding:13px 12px; border:1px solid var(--border); border-radius:12px; background:#fff; font-size:15px; }
+.statusGrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.status { border:1px solid var(--border); border-radius:14px; background:#fff; padding:13px; text-align:left; font-weight:900; cursor:pointer; }
+.status.active { border-color:var(--primary); box-shadow:0 0 0 3px rgba(27,103,210,.12); background:#f7fbff; }
+.btn { width:100%; border:0; border-radius:14px; background:var(--primary); color:#fff; padding:15px; font-size:16px; font-weight:900; cursor:pointer; margin-top:12px; }
+.btn:hover { background:var(--primary-dark); }
+.btn:disabled { opacity:.65; cursor:not-allowed; }
+.msg { display:none; margin-top:14px; padding:12px; border-radius:12px; font-size:14px; line-height:1.35; white-space:pre-line; }
+.msg.ok { display:block; background:#ecfdf3; color:var(--ok); border:1px solid #abefc6; }
+.msg.err { display:block; background:#fff1f0; color:var(--err); border:1px solid #fecdca; }
+.msg.warn { display:block; background:#fffaeb; color:var(--warn); border:1px solid #fedf89; }
+.hint,.footer { font-size:12px; color:var(--muted); }
+.hint { margin-top:7px; }
+.footer { text-align:center; margin-top:15px; }
+.version { font-size:11px; color:#98a2b3; text-align:center; margin-top:8px; }
+@media(max-width:480px) { .statusGrid { grid-template-columns:1fr; } .card { padding:20px; } }
+</style>
+</head>
+<body>
+<div class="wrap"><main class="card">
+  <div class="brand"><div class="logo">RM</div><div><h1>Field Status Submission</h1><p class="sub">Select AM, RM name and today's status</p></div></div>
+  <div id="setupWarning" class="setup">Setup pending: Power Automate URL is not configured in index.html.</div>
+  <div id="dateText" class="dateBox"></div>
+  <form id="statusForm">
+    <div class="field"><label for="am">AM Name</label><select id="am" required><option value="">Select AM</option></select></div>
+    <div class="field"><label for="rm">RM Name</label><select id="rm" required disabled><option value="">Select RM</option></select></div>
+    <div class="field"><label>Status</label><div id="statusGrid" class="statusGrid"></div></div>
+    <div class="field" id="otherTaskWrap" style="display:none"><label for="otherTaskName">Other Task Status Name</label><input id="otherTaskName" maxlength="120" placeholder="Example: Training, Meeting, Audit"><div class="hint">This field appears only when Others Task is selected.</div></div>
+    <button id="submitBtn" class="btn" type="submit">Submit Status</button>
+    <div id="msg" class="msg"></div>
+  </form>
+  <div class="footer">App shows actual Power Automate success/failed response.</div>
+  <div class="version">RM-STATUS-CLEAN-FRESH-V1-20260707</div>
 </main></div>
 <script>
 const APP_CONFIG = {
-  "appVersion": "RM-FIELD-STATUS-RESPONSE-AWARE-V5-20260707",
+  "appVersion": "RM-STATUS-CLEAN-FRESH-V1-20260707",
   "powerAutomateUrl": "https://default44f84597e41f4b9e84f012e6d5b975.d8.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/02/workflows/31bed159e22d48c198906bd46236c667/triggers/manual/paths/invoke?api-version=1",
   "secretKey": "CHANGE_THIS_SHARED_SECRET",
   "amRmMap": {
@@ -60,16 +84,30 @@ const APP_CONFIG = {
     ]
   }
 };
-const statuses=['Listing','Maintenance','Others Task','Leave']; let selectedStatus='';
-function ordinal(n){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
-function formatDate(d){return `Date : ${ordinal(d.getDate())} ${d.toLocaleString('en-GB',{month:'long'})}'${String(d.getFullYear()).slice(-2)}`;}
-function isoLocalDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
-function showMsg(t,type){const m=document.getElementById('msg');m.textContent=t;m.className='msg '+type;}
-function isConfigured(){return APP_CONFIG.powerAutomateUrl && APP_CONFIG.powerAutomateUrl.startsWith('https://') && !APP_CONFIG.powerAutomateUrl.includes('PASTE_POWER_AUTOMATE_HTTP_POST_URL_HERE');}
-function resetStatus(){selectedStatus='';document.querySelectorAll('.status').forEach(x=>x.classList.remove('active'));document.getElementById('otherTaskWrap').style.display='none';document.getElementById('otherTaskName').value='';}
-function init(){document.getElementById('dateText').textContent=formatDate(new Date());if(!isConfigured())document.getElementById('setupWarning').style.display='block';const am=document.getElementById('am');Object.keys(APP_CONFIG.amRmMap||{}).forEach(a=>am.add(new Option(a,a)));const grid=document.getElementById('statusGrid');statuses.forEach(s=>{const b=document.createElement('button');b.type='button';b.className='status';b.textContent=s;b.onclick=()=>{selectedStatus=s;document.querySelectorAll('.status').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('otherTaskWrap').style.display=s==='Others Task'?'block':'none';};grid.appendChild(b);});}
-document.getElementById('am').addEventListener('change',e=>{const rm=document.getElementById('rm');rm.innerHTML='<option value="">Select RM</option>';(APP_CONFIG.amRmMap[e.target.value]||[]).forEach(n=>rm.add(new Option(n,n)));rm.disabled=!e.target.value;resetStatus();});
-async function postToPowerAutomate(payload){
+const statuses = ['Listing','Maintenance','Others Task','Leave'];
+let selectedStatus = '';
+function ordinal(n) { const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+function formatDate(d) { return `Date : ${ordinal(d.getDate())} ${d.toLocaleString('en-GB',{month:'long'})}'${String(d.getFullYear()).slice(-2)}`; }
+function isoLocalDate(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function showMsg(t,type) { const m=document.getElementById('msg'); m.textContent=t; m.className='msg '+type; }
+function toReadable(value) {
+  if (value === undefined || value === null) return '';
+  if (typeof value === 'string') return value;
+  if (value.message && typeof value.message === 'string') return value.message;
+  if (value.error && typeof value.error === 'string') return value.error;
+  if (value.error && value.error.message) return String(value.error.message);
+  try { return JSON.stringify(value, null, 2); } catch(e) { return String(value); }
+}
+function isConfigured() { return APP_CONFIG.powerAutomateUrl && APP_CONFIG.powerAutomateUrl.startsWith('https://') && !APP_CONFIG.powerAutomateUrl.includes('PASTE_POWER_AUTOMATE_HTTP_POST_URL_HERE'); }
+function resetStatus() { selectedStatus=''; document.querySelectorAll('.status').forEach(x=>x.classList.remove('active')); document.getElementById('otherTaskWrap').style.display='none'; document.getElementById('otherTaskName').value=''; }
+function init() {
+  document.getElementById('dateText').textContent = formatDate(new Date());
+  if(!isConfigured()) document.getElementById('setupWarning').style.display = 'block';
+  const am=document.getElementById('am'); Object.keys(APP_CONFIG.amRmMap||{}).forEach(a=>am.add(new Option(a,a)));
+  const grid=document.getElementById('statusGrid'); statuses.forEach(s=>{ const b=document.createElement('button'); b.type='button'; b.className='status'; b.textContent=s; b.onclick=()=>{ selectedStatus=s; document.querySelectorAll('.status').forEach(x=>x.classList.remove('active')); b.classList.add('active'); document.getElementById('otherTaskWrap').style.display = s==='Others Task' ? 'block':'none'; }; grid.appendChild(b); });
+}
+document.getElementById('am').addEventListener('change', e=>{ const rm=document.getElementById('rm'); rm.innerHTML='<option value="">Select RM</option>'; (APP_CONFIG.amRmMap[e.target.value]||[]).forEach(n=>rm.add(new Option(n,n))); rm.disabled=!e.target.value; resetStatus(); });
+async function postToPowerAutomate(payload) {
   const response = await fetch(APP_CONFIG.powerAutomateUrl, {
     method: 'POST',
     mode: 'cors',
@@ -80,28 +118,35 @@ async function postToPowerAutomate(payload){
   let body = {};
   try { body = rawText ? JSON.parse(rawText) : {}; } catch(e) { body = { message: rawText }; }
   if (!response.ok || body.success === false) {
-    const errMsg = body.message || body.error || `Power Automate returned HTTP ${response.status}`;
+    const errMsg = toReadable(body.message) || toReadable(body.error) || toReadable(body.details) || toReadable(body) || `Power Automate returned HTTP ${response.status}`;
     throw new Error(errMsg);
   }
+  body.message = toReadable(body.message) || 'Status saved successfully in Excel.';
+  body.runId = toReadable(body.runId) || 'N/A';
   return body;
 }
-document.getElementById('statusForm').addEventListener('submit',async e=>{
- e.preventDefault();
- const am=document.getElementById('am').value, rm=document.getElementById('rm').value, other=document.getElementById('otherTaskName').value.trim();
- if(!am||!rm||!selectedStatus){showMsg('Please select AM, RM and status.','err');return;}
- if(selectedStatus==='Others Task'&&!other){showMsg('Please enter other task status name.','err');return;}
- const now=new Date(); const payload={secretKey:APP_CONFIG.secretKey,submitDate:isoLocalDate(now),submitDateText:formatDate(now),amName:am,rmName:rm,status:selectedStatus,otherTaskName:selectedStatus==='Others Task'?other:'',submittedAt:now.toISOString(),source:'RM Field Status Response Aware App',appVersion:APP_CONFIG.appVersion};
- if(!isConfigured()){showMsg('Failed: Power Automate URL is not configured in index.html.','err');return;}
- const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='Submitting...';showMsg('Submitting to Power Automate...','warn');
- try{
-   const result = await postToPowerAutomate(payload);
-   showMsg(`Success: ${result.message || 'Status saved successfully.'}
-Run ID: ${result.runId || 'N/A'}`, 'ok');
-   e.target.reset();document.getElementById('rm').disabled=true;resetStatus();
- }catch(err){
-   showMsg(`Failed: ${err.message}
+document.getElementById('statusForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const am=document.getElementById('am').value;
+  const rm=document.getElementById('rm').value;
+  const other=document.getElementById('otherTaskName').value.trim();
+  if(!am || !rm || !selectedStatus) { showMsg('Please select AM, RM and status.','err'); return; }
+  if(selectedStatus==='Others Task' && !other) { showMsg('Please enter other task status name.','err'); return; }
+  if(!isConfigured()) { showMsg('Failed: Power Automate URL is not configured in index.html.','err'); return; }
+  const now=new Date();
+  const payload={ secretKey:APP_CONFIG.secretKey, submitDate:isoLocalDate(now), submitDateText:formatDate(now), amName:am, rmName:rm, status:selectedStatus, otherTaskName:selectedStatus==='Others Task'?other:'', submittedAt:now.toISOString(), source:'RM Status Clean Fresh App', appVersion:APP_CONFIG.appVersion };
+  const btn=document.getElementById('submitBtn'); btn.disabled=true; btn.textContent='Submitting...'; showMsg('Submitting to Power Automate...','warn');
+  try {
+    const result = await postToPowerAutomate(payload);
+    showMsg(`Success: ${result.message}
+Run ID: ${result.runId}`, 'ok');
+    e.target.reset(); document.getElementById('rm').disabled=true; resetStatus();
+  } catch(err) {
+    showMsg(`Failed: ${toReadable(err.message || err)}
 Check Power Automate Run History for exact failed step.`, 'err');
- }finally{btn.disabled=false;btn.textContent='Submit Status';}
+  } finally { btn.disabled=false; btn.textContent='Submit Status'; }
 });
 init();
-</script></body></html>
+</script>
+</body>
+</html>
