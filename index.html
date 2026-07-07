@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RM Field Status Submission</title>
+<style>
+:root{--p:#1267d8;--pd:#0c50aa;--txt:#111827;--mut:#667085;--bd:#d9e3f0;--bg:#f4f8ff;--ok:#067647;--err:#b42318;--warn:#b54708}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#edf5ff,#ffffff);color:var(--txt)}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px} .card{width:100%;max-width:600px;background:#fff;border:1px solid var(--bd);border-radius:22px;box-shadow:0 18px 46px rgba(20,44,84,.14);padding:26px}
+.brand{display:flex;gap:14px;align-items:center;margin-bottom:14px} .logo{width:50px;height:50px;border-radius:15px;background:var(--p);color:#fff;display:grid;place-items:center;font-weight:900;letter-spacing:.5px}
+h1{font-size:24px;margin:0} .sub{margin:5px 0 0;color:var(--mut);font-size:14px} .dateBox{background:#eef6ff;border:1px dashed #93c5fd;border-radius:14px;padding:13px 14px;margin:14px 0 20px;font-weight:900}
+.field{margin:15px 0} label{display:block;font-weight:900;margin:0 0 8px} select,input{width:100%;padding:13px 12px;border:1px solid var(--bd);border-radius:12px;background:#fff;font-size:15px}
+.statusGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px} .status{border:1px solid var(--bd);border-radius:14px;background:#fff;padding:13px;text-align:left;font-weight:900;cursor:pointer} .status.active{border-color:var(--p);box-shadow:0 0 0 3px rgba(18,103,216,.12);background:#f7fbff}
+.btn{width:100%;border:0;border-radius:14px;background:var(--p);color:#fff;padding:15px 16px;font-size:16px;font-weight:900;cursor:pointer;margin-top:12px} .btn:hover{background:var(--pd)} .btn:disabled{opacity:.65;cursor:not-allowed}
+.msg{display:none;margin-top:14px;padding:12px;border-radius:12px;font-size:14px;line-height:1.35} .msg.ok{display:block;background:#ecfdf3;color:var(--ok);border:1px solid #abefc6} .msg.err{display:block;background:#fff1f0;color:var(--err);border:1px solid #fecdca} .msg.warn{display:block;background:#fffaeb;color:var(--warn);border:1px solid #fedf89}
+.hint,.footer{font-size:12px;color:var(--mut)} .hint{margin-top:7px} .footer{margin-top:15px;text-align:center} .version{font-size:11px;color:#98a2b3;text-align:center;margin-top:8px}
+.setup{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:10px 12px;font-size:13px;margin:0 0 14px;display:none}
+@media(max-width:480px){.statusGrid{grid-template-columns:1fr}.card{padding:20px}}
+</style>
+</head>
+<body>
+<div class="wrap"><main class="card">
+  <div class="brand"><div class="logo">RM</div><div><h1>Field Status Submission</h1><p class="sub">Select AM, RM name and today's status</p></div></div>
+  <div id="setupWarning" class="setup">Power Automate URL is not configured. Edit index.html and paste your Flow HTTP POST URL in APP_CONFIG.powerAutomateUrl.</div>
+  <div id="dateText" class="dateBox"></div>
+  <form id="statusForm">
+    <div class="field"><label for="am">AM Name</label><select id="am" required><option value="">Select AM</option></select></div>
+    <div class="field"><label for="rm">RM Name</label><select id="rm" required disabled><option value="">Select RM</option></select></div>
+    <div class="field"><label>Status</label><div id="statusGrid" class="statusGrid"></div></div>
+    <div class="field" id="otherTaskWrap" style="display:none"><label for="otherTaskName">Other Task Status Name</label><input id="otherTaskName" maxlength="120" placeholder="Example: Training, Meeting, Audit"><div class="hint">This field appears only when Others Task is selected.</div></div>
+    <button id="submitBtn" class="btn" type="submit">Submit Status</button>
+    <div id="msg" class="msg"></div>
+  </form>
+  <div class="footer">Submission date auto-changes as per current calendar date.</div>
+  <div class="version">RM-FIELD-STATUS-FRESH-V4-20260706-1730</div>
+</main></div>
+<script>
+// ===================== EDIT ONLY THIS CONFIG =====================
+const APP_CONFIG = {
+  "appVersion": "RM-FIELD-STATUS-FRESH-V4-20260706-1730",
+  "powerAutomateUrl": "https://default44f84597e41f4b9e84f012e6d5b975.d8.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/02/workflows/31bed159e22d48c198906bd46236c667/triggers/manual/paths/invoke?api-version=1",
+  "secretKey": "CHANGE_THIS_SHARED_SECRET",
+  "amRmMap": {
+    "Ashish Srivastava": [
+      "Beerendra Singh (H132953)",
+      "Chandrabhan Jatav (H155781)",
+      "Dharamveer RM (H24670)",
+      "Diwakar salun (H24679)",
+      "Kapil Laxkar H217831",
+      "Nand Lal Jat H217972",
+      "Rajender Kumar (H42125)",
+      "Rakesh Yogi H217780",
+      "Rameshchand Kumawat (H24684)",
+      "Shiv Pal Kumawat H214005",
+      "Vikram Singh (H24749)"
+    ],
+    "Shankar Rana": [
+      "Chetan Mohtha (H45732)",
+      "Badri Lal Dhakar H201572",
+      "Santosh Singh H185550",
+      "Prem Verma (H24669)",
+      "Manish Solanki (H45533)",
+      "Mahesh Verma (H49623)",
+      "Gunesh Ram Banjara H202861",
+      "Dharmpal Bhati (H131052)",
+      "Jitendra Choubisa (H146322)"
+    ]
+  }
+};
+// ================================================================
+const statuses=['Listing','Maintenance','Others Task','Leave']; let selectedStatus='';
+function ordinal(n){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+function formatDate(d){return `Date : ${ordinal(d.getDate())} ${d.toLocaleString('en-GB',{month:'long'})}'${String(d.getFullYear()).slice(-2)}`;}
+function isoLocalDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function showMsg(t,type){const m=document.getElementById('msg');m.textContent=t;m.className='msg '+type;}
+function isConfigured(){return APP_CONFIG.powerAutomateUrl && !APP_CONFIG.powerAutomateUrl.includes('PASTE_POWER_AUTOMATE_HTTP_POST_URL_HERE') && APP_CONFIG.powerAutomateUrl.startsWith('https://');}
+function resetStatus(){selectedStatus='';document.querySelectorAll('.status').forEach(x=>x.classList.remove('active'));document.getElementById('otherTaskWrap').style.display='none';document.getElementById('otherTaskName').value='';}
+function downloadBackup(payload){const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`RM_Status_${payload.rmName.replace(/[^a-z0-9]+/gi,'_')}_${payload.submitDate}.json`;a.click();}
+async function sendPayload(payload){
+  const body=JSON.stringify(payload);
+  try{
+    await fetch(APP_CONFIG.powerAutomateUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body});
+    return true;
+  }catch(fetchError){
+    try{
+      if(navigator.sendBeacon){
+        const ok=navigator.sendBeacon(APP_CONFIG.powerAutomateUrl,new Blob([body],{type:'text/plain;charset=UTF-8'}));
+        if(ok) return true;
+      }
+    }catch(beaconError){}
+    return false;
+  }
+}
+function init(){
+  document.getElementById('dateText').textContent=formatDate(new Date());
+  if(!isConfigured()) document.getElementById('setupWarning').style.display='block';
+  const amSel=document.getElementById('am');Object.keys(APP_CONFIG.amRmMap||{}).forEach(a=>amSel.add(new Option(a,a)));
+  const grid=document.getElementById('statusGrid');statuses.forEach(s=>{const b=document.createElement('button');b.type='button';b.className='status';b.textContent=s;b.onclick=()=>{selectedStatus=s;document.querySelectorAll('.status').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('otherTaskWrap').style.display=s==='Others Task'?'block':'none';};grid.appendChild(b);});
+}
+document.getElementById('am').addEventListener('change',e=>{const rm=document.getElementById('rm');rm.innerHTML='<option value="">Select RM</option>';(APP_CONFIG.amRmMap[e.target.value]||[]).forEach(n=>rm.add(new Option(n,n)));rm.disabled=!e.target.value;resetStatus();});
+document.getElementById('statusForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const am=document.getElementById('am').value, rm=document.getElementById('rm').value, other=document.getElementById('otherTaskName').value.trim();
+  if(!am||!rm||!selectedStatus){showMsg('Please select AM, RM and status.','err');return;}
+  if(selectedStatus==='Others Task'&&!other){showMsg('Please enter other task status name.','err');return;}
+  const now=new Date(); const payload={secretKey:APP_CONFIG.secretKey,submitDate:isoLocalDate(now),submitDateText:formatDate(now),amName:am,rmName:rm,status:selectedStatus,otherTaskName:selectedStatus==='Others Task'?other:'',submittedAt:now.toISOString(),source:'RM Field Status Fresh App',appVersion:APP_CONFIG.appVersion};
+  if(!isConfigured()){downloadBackup(payload);showMsg('Setup pending: Power Automate URL is not added in index.html. Backup JSON downloaded.','warn');return;}
+  const key=`${payload.submitDate}|${rm}`; if(localStorage.getItem(key)&&!confirm('Status already submitted from this device today. Submit again?')) return;
+  const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='Submitting...';
+  const sent=await sendPayload(payload);
+  btn.disabled=false;btn.textContent='Submit Status';
+  if(sent){localStorage.setItem(key,JSON.stringify(payload));showMsg('Status sent to Power Automate. Please verify Excel StatusLog/DailySummary.','ok');e.target.reset();document.getElementById('rm').disabled=true;resetStatus();}
+  else{downloadBackup(payload);showMsg('Network unavailable. Backup JSON downloaded. After internet/URL check, submit again.','warn');}
+});
+init();
+</script>
+</body>
+</html>
